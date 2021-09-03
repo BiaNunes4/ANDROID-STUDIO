@@ -42,7 +42,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
     Cursor listaVacina (){
         SQLiteDatabase db = this.getReadableDatabase();
 
-        Cursor cur = db.rawQuery("SELECT  ID, NOME_VACINA,DATA_VACINA,UNIDADE,DOSE," null);
+        Cursor cur = db.rawQuery("SELECT  ID, NOME_VACINA,DATA_VACINA,UNIDADE,DOSE FROM VACINA ORDER BY ID", null);
          return cur;
     }
     public void atualizarVacina(Integer id, String nome, String data_vacina, String unidade, String dose){
