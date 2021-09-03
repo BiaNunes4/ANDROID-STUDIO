@@ -1,0 +1,126 @@
+<html>
+<head>
+<title>MainActivity.java</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #000080; font-weight: bold;}
+.s1 { color: #000000;}
+.s2 { color: #0000ff;}
+.s3 { color: #008000; font-weight: bold;}
+</style>
+</head>
+<body bgcolor="#ffffff">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#c0c0c0" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+MainActivity.java</font>
+</center></td></tr></table>
+<pre><span class="s0">package </span>com.example.ex1_dmiot;
+
+<span class="s0">import </span>androidx.appcompat.app.AppCompatActivity;
+<span class="s0">import </span>android.view.View;
+<span class="s0">import </span>android.widget.EditText;
+<span class="s0">import </span>android.database.Cursor;
+<span class="s0">import </span>android.os.Bundle;
+<span class="s0">import </span>java.util.ArrayList;
+
+<span class="s0">public class </span>MainActivity <span class="s0">extends </span>AppCompatActivity {
+    <span class="s0">public </span>DatabaseManager db;
+    <span class="s0">public </span>ArrayList&lt;Vacina&gt;vacina = <span class="s0">new </span>ArrayList&lt;&gt;();
+    <span class="s0">public </span>Integer idAtual = <span class="s2">0</span>;
+    <span class="s0">public </span>Integer totalVacinas = <span class="s2">0</span>;
+
+
+    @Override
+    <span class="s0">protected void </span>onCreate(Bundle savedInstanceState) {
+        <span class="s0">super</span>.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        <span class="s0">this</span>.db = <span class="s0">new </span>DatabaseManager(<span class="s0">this</span>,<span class="s3">&quot;base&quot;</span>,<span class="s0">null</span>,<span class="s2">1</span>);
+        startDatabase();
+        populaTela();
+    }
+    <span class="s0">public void </span>startDatabase(){
+        <span class="s0">this</span>.db.inserirVacina(<span class="s2">1</span>,<span class="s3">&quot;CORONAVAC&quot;</span>, <span class="s3">&quot;11/10/21&quot;</span>, <span class="s3">&quot;MORUMBI&quot;</span>, <span class="s3">&quot;2 DOSE&quot;</span>);
+        <span class="s0">this</span>.db.inserirVacina(<span class="s2">2</span>,<span class="s3">&quot;PFIZER&quot;</span>,<span class="s3">&quot;11/10/21&quot;</span>, <span class="s3">&quot;CAMPO GRANDE&quot;</span>,<span class="s3">&quot;1 DOSE&quot;</span>);
+    }
+    <span class="s0">public void </span>populaTela(){
+        Cursor c = db.listaVacina();
+
+        <span class="s0">if</span>(c.getCount()&gt;<span class="s2">0</span>){
+            c.moveToFirst();
+            totalVacinas = c.getCount();
+            idAtual = <span class="s2">0</span>;
+            vacina.clear();
+
+            <span class="s0">do</span>{
+                Vacina vac = <span class="s0">new </span>Vacina();
+                vac.setData_vacina(c.getString(c.getColumnIndex(<span class="s3">&quot;DATA_VACINA&quot;</span>)));
+                vac.setNome_vacina(c.getString(c.getColumnIndex(<span class="s3">&quot;NOME_VACINA&quot;</span>)));
+                vac.setDose(c.getString(c.getColumnIndex(<span class="s3">&quot;DOSE&quot;</span>)));
+                vac.setUnidade(c.getString(c.getColumnIndex(<span class="s3">&quot;UNIDADE&quot;</span>)));
+
+                vacina.add(vac);
+            }<span class="s0">while</span>(c.moveToNext());
+
+            <span class="s0">public void </span>showProximo(View view){
+                EditText id = findViewById(R.id.id);
+                EditText data_vacina = findViewById(R.id.data_vacina);
+                EditText nome = findViewById(R.id.nome);
+                EditText unidade = findViewById(R.id.unidade);
+                EditText dose = findViewById(R.id.dose);
+
+                Vacina c = vacina.get(idAtual);
+
+                id.setText((c.getId().toString()));
+                data_vacina.setText(c.getData_vacina());
+                nome.setText(c.getNome_vacina());
+                unidade.setText(c.getUnidade());
+                dose.setText(c.getDose());
+
+                idAtual++;
+                <span class="s0">if</span>(idAtual == totalVacinas) idAtual=<span class="s2">0</span>;
+            }
+            <span class="s0">public void </span>atualizar (View view){
+                EditText data_vacina = findViewById(R.id.data_vacina);
+                EditText nome = findViewById(R.id.nome);
+                EditText unidade = findViewById(R.id.unidade);
+                EditText dose = findViewById(R.id.dose);
+
+                <span class="s0">this</span>.db.atualizarVacina(<span class="s0">new </span>Integer(id.getText().toString()), data_vacina.getText().toString(), nome.getText().toString(), unidade.getText().toString(),dose.getText().toString());
+                populaTela();
+            }
+            <span class="s0">public void </span>apagar(View view){
+                EditText nome = findViewById(R.id.nome);
+
+                <span class="s0">this</span>.db.removeVacina((nome.getText().toString()));
+                populaTela();
+            }
+            <span class="s0">public void </span>novo(View view){
+                EditText data_vacina = findViewById(R.id.data_vacina);
+                EditText nome = findViewById(R.id.nome);
+                EditText unidade = findViewById(R.id.unidade);
+                EditText dose = findViewById(R.id.dose);
+
+                data_vacina.setText(<span class="s3">&quot;&quot;</span>);
+                nome.setText(<span class="s3">&quot;&quot;</span>);
+                unidade.setText(<span class="s3">&quot;&quot;</span>);
+                dose.setText(<span class="s3">&quot;&quot;</span>);
+            }
+            <span class="s0">public void </span>inserir(View view){
+                EditText data_vacina = findViewById(R.id.data_vacina);
+                EditText nome = findViewById(R.id.nome);
+                EditText unidade = findViewById(R.id.unidade);
+                EditText dose = findViewById(R.id.dose);
+
+                <span class="s0">this</span>.db.removeVacina((nome.getText().toString()));
+                populaTela();
+            }
+
+        }
+    }
+
+
+}</pre>
+</body>
+</html>
